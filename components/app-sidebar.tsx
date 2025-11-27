@@ -1,7 +1,7 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
-import { FileText, FolderPlus, ArrowUpDown, ChevronUp, Folder, FolderOpen, File } from "lucide-react";
+import { FileText, FolderPlus, ArrowUpDown, ChevronUp, ChevronDown, Folder, FolderOpen, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -21,7 +21,7 @@ import {
   SidebarGroupContent,
   SidebarHeader,
 } from "@/components/ui/sidebar"
-import { useState } from "react";
+import React, { useState } from "react";
 
 const fileTree = [
   {
@@ -54,9 +54,13 @@ const fileTree = [
   { name: "README.md", type: "file" },
 ];
 
-function FileTreeItem({ item, level = 0, basePath = "" }: { item: any, level?: number, basePath?: string }) {
-  const [isOpen, setIsOpen] = useState(true);
+function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: { item: any, level?: number, basePath?: string, isCollapsed?: boolean }) {
+  const [isOpen, setIsOpen] = useState(!isCollapsed);
   const fullPath = basePath ? `${basePath}/${item.name}` : item.name;
+  
+  React.useEffect(() => {
+    setIsOpen(!isCollapsed);
+  }, [isCollapsed]);
   
   if (item.type === "file") {
     // For root files, don't add extra path
@@ -79,7 +83,7 @@ function FileTreeItem({ item, level = 0, basePath = "" }: { item: any, level?: n
       </CollapsibleTrigger>
       <CollapsibleContent>
         {item.children?.map((child: any, index: number) => (
-          <FileTreeItem key={index} item={child} level={level + 1} basePath={fullPath} />
+          <FileTreeItem key={index} item={child} level={level + 1} basePath={fullPath} isCollapsed={isCollapsed} />
         ))}
       </CollapsibleContent>
     </Collapsible>
@@ -87,6 +91,33 @@ function FileTreeItem({ item, level = 0, basePath = "" }: { item: any, level?: n
 }
 
 export function AppSidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'name' | 'type'>('name');
+
+  const sortedFileTree = [...fileTree].sort((a, b) => {
+    if (sortOrder === 'type') {
+      if (a.type !== b.type) {
+        return a.type === 'folder' ? -1 : 1;
+      }
+    }
+    return a.name.localeCompare(b.name);
+  });
+
+  const sortChildren = (items: any[]): any[] => {
+    return items.map(item => ({
+      ...item,
+      children: item.children ? sortChildren(item.children.sort((a: any, b: any) => {
+        if (sortOrder === 'type') {
+          if (a.type !== b.type) {
+            return a.type === 'folder' ? -1 : 1;
+          }
+        }
+        return a.name.localeCompare(b.name);
+      })) : undefined
+    }));
+  };
+
+  const finalSortedTree = sortChildren(sortedFileTree);
   return (
     <Sidebar>
       <SidebarHeader className="my-4 relative h-20">
@@ -122,27 +153,27 @@ export function AppSidebar() {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setSortOrder(sortOrder === 'name' ? 'type' : 'name')}>
                       <ArrowUpDown className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Change Sort Order</TooltipContent>
+                  <TooltipContent>Sort by {sortOrder === 'name' ? 'Type' : 'Name'}</TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                      <ChevronUp className="h-4 w-4" />
+                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setIsCollapsed(!isCollapsed)}>
+                      {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Collapse All</TooltipContent>
+                  <TooltipContent>{isCollapsed ? "Expand All" : "Collapse All"}</TooltipContent>
                 </Tooltip>
               </div>
             </TooltipProvider>
           </div>
           <SidebarGroupContent>
             <div className="space-y-1">
-              {fileTree.map((item, index) => (
-                <FileTreeItem key={index} item={item} />
+              {finalSortedTree.map((item, index) => (
+                <FileTreeItem key={index} item={item} isCollapsed={isCollapsed} />
               ))}
             </div>
           </SidebarGroupContent>

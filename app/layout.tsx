@@ -4,7 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-// import { BranchSelector } from "@/components/branch-selector";
+import { BranchSelector } from "@/components/branch-selector";
+import { Button } from "@/components/ui/button";
+import { Save } from "lucide-react";
 import ModeToggle from "@/components/mode-toggle";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Separator } from "@/components/ui/separator";
@@ -77,7 +79,13 @@ export default function RootLayout({
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
-              <div className="ml-auto flex items-center gap-2">
+              <div className="flex-1 flex justify-center">
+                {/* <Button variant="outline" size="sm">
+                  <Save className="h-4 w-4 mr-2" />
+                  Save
+                </Button> */}
+              </div>
+              <div className="flex items-center gap-2">
                 <ModeToggle />
                 {/* <BranchSelector branches={branches} /> */}
               </div>
