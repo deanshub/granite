@@ -4,6 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+// import { BranchSelector } from "@/components/branch-selector";
+import ModeToggle from "@/components/mode-toggle";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
@@ -25,6 +28,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const branches = [
+  { value: "main", label: "main" },
+  { value: "develop", label: "develop" },
+  { value: "feature/auth", label: "feature/auth" },
+  { value: "feature/ui-updates", label: "feature/ui-updates" },
+  { value: "hotfix/critical-bug", label: "hotfix/critical-bug" },
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,9 +49,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -60,12 +77,17 @@ export default function RootLayout({
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
+              <div className="ml-auto flex items-center gap-2">
+                <ModeToggle />
+                {/* <BranchSelector branches={branches} /> */}
+              </div>
             </header>
             <main className="flex flex-1 flex-col gap-4 p-4">
               {children}
             </main>
           </SidebarInset>
         </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -89,14 +89,15 @@ function FileTreeItem({ item, level = 0, basePath = "" }: { item: any, level?: n
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader className="p-4">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Logo"
-          width={80}
-          height={16}
-        />
+      <SidebarHeader className="my-4 relative h-20">
+        <Link href="/">
+          <Image
+            fill
+            src="/granite.png"
+            alt="Granite Logo"
+            className="object-contain"
+          />
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

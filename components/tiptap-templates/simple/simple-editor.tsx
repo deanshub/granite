@@ -71,9 +71,11 @@ import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle"
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
 
 // --- Styles ---
-import "@/components/tiptap-templates/simple/simple-editor.scss"
+// import "@/components/tiptap-templates/simple/simple-editor.scss"
 
-import content from "@/components/tiptap-templates/simple/data/content.json"
+import {Markdown} from '@tiptap/markdown';
+
+// import content from "@/components/tiptap-templates/simple/data/content.json"
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -183,7 +185,7 @@ const MobileToolbarContent = ({
   </>
 )
 
-export function SimpleEditor() {
+export function SimpleEditor({ content }: { content: string }) {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
@@ -210,6 +212,7 @@ export function SimpleEditor() {
           enableClickSelection: true,
         },
       }),
+      Markdown,
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       TaskList,
@@ -229,6 +232,7 @@ export function SimpleEditor() {
       }),
     ],
     content,
+    contentType: 'markdown',
   })
 
   const rect = useCursorVisibility({
@@ -243,7 +247,7 @@ export function SimpleEditor() {
   }, [isMobile, mobileView])
 
   return (
-    <div className="simple-editor-wrapper">
+    <div className="">
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
@@ -254,6 +258,7 @@ export function SimpleEditor() {
                 }
               : {}),
           }}
+          className="mb-4 rounded-xl"
         >
           {mobileView === "main" ? (
             <MainToolbarContent
