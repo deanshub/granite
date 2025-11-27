@@ -1,5 +1,6 @@
 'use client';
 import Image from "next/image";
+import Link from "next/link";
 import { FileText, FolderPlus, ArrowUpDown, ChevronUp, Folder, FolderOpen, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,15 +54,18 @@ const fileTree = [
   { name: "README.md", type: "file" },
 ];
 
-function FileTreeItem({ item, level = 0 }: { item: any, level?: number }) {
+function FileTreeItem({ item, level = 0, basePath = "" }: { item: any, level?: number, basePath?: string }) {
   const [isOpen, setIsOpen] = useState(true);
+  const fullPath = basePath ? `${basePath}/${item.name}` : item.name;
   
   if (item.type === "file") {
+    // For root files, don't add extra path
+    const linkPath = level === 0 ? `/${item.name}` : `/${fullPath}`;
     return (
-      <div className={`flex items-center gap-2 py-1 px-2 hover:bg-accent rounded-sm cursor-pointer`} style={{ paddingLeft: `${level * 12 + 8}px` }}>
+      <Link href={linkPath} className={`flex items-center gap-2 py-1 px-2 hover:bg-accent rounded-sm cursor-pointer`} style={{ paddingLeft: `${level * 12 + 8}px` }}>
         <File className="h-4 w-4 text-blue-500" />
         <span className="text-sm">{item.name}</span>
-      </div>
+      </Link>
     );
   }
 
@@ -75,7 +79,7 @@ function FileTreeItem({ item, level = 0 }: { item: any, level?: number }) {
       </CollapsibleTrigger>
       <CollapsibleContent>
         {item.children?.map((child: any, index: number) => (
-          <FileTreeItem key={index} item={child} level={level + 1} />
+          <FileTreeItem key={index} item={child} level={level + 1} basePath={fullPath} />
         ))}
       </CollapsibleContent>
     </Collapsible>
