@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/sidebar";
 import React, { useState } from "react";
 import { type FileTreeItem  } from "@/lib/file-tree";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import Link from "next/link";
 
 function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: { item: FileTreeItem, level?: number, basePath?: string, isCollapsed?: boolean }) {
@@ -67,6 +69,7 @@ function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: {
 export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sortOrder, setSortOrder] = useState<'name' | 'type'>('name');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const sortedFileTree = [...fileTree].sort((a, b) => {
     if (sortOrder === 'type') {
@@ -91,7 +94,25 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
     }));
   };
 
-  const finalSortedTree = sortChildren(sortedFileTree);
+  const filterTree = (items: FileTreeItem[]): FileTreeItem[] => {
+    if (!searchTerm) return items;
+    
+    return items.filter(item => {
+      if (item.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return true;
+      }
+      if (item.children) {
+        const filteredChildren = filterTree(item.children);
+        return filteredChildren.length > 0;
+      }
+      return false;
+    }).map(item => ({
+      ...item,
+      children: item.children ? filterTree(item.children) : undefined
+    }));
+  };
+
+  const finalSortedTree = sortChildren(filterTree(sortedFileTree));
   return (
     <Sidebar>
       <SidebarHeader>
@@ -144,6 +165,17 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
                 </Tooltip>
               </div>
             </TooltipProvider>
+          </div>
+          <div className="px-2 pb-2">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search files..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
           </div>
       </SidebarHeader>
       <SidebarContent>
