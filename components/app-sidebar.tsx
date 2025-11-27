@@ -1,6 +1,5 @@
 'use client';
 import Image from "next/image";
-import Link from "next/link";
 import { FileText, FolderPlus, ArrowUpDown, ChevronUp, ChevronDown, Folder, FolderOpen, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,41 +19,12 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import React, { useState } from "react";
+import { type FileTreeItem  } from "@/lib/file-tree";
+import Link from "next/link";
 
-const fileTree = [
-  {
-    name: "app",
-    type: "folder",
-    children: [
-      { name: "layout.tsx", type: "file" },
-      { name: "page.tsx", type: "file" },
-      { name: "globals.css", type: "file" },
-    ]
-  },
-  {
-    name: "components",
-    type: "folder", 
-    children: [
-      { name: "app-sidebar.tsx", type: "file" },
-      { name: "top-nav.tsx", type: "file" },
-      {
-        name: "ui",
-        type: "folder",
-        children: [
-          { name: "button.tsx", type: "file" },
-          { name: "sidebar.tsx", type: "file" },
-          { name: "tooltip.tsx", type: "file" },
-        ]
-      }
-    ]
-  },
-  { name: "package.json", type: "file" },
-  { name: "README.md", type: "file" },
-];
-
-function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: { item: any, level?: number, basePath?: string, isCollapsed?: boolean }) {
+function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: { item: FileTreeItem, level?: number, basePath?: string, isCollapsed?: boolean }) {
   const [isOpen, setIsOpen] = useState(!isCollapsed);
   const fullPath = basePath ? `${basePath}/${item.name}` : item.name;
   
@@ -66,7 +36,11 @@ function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: {
     // For root files, don't add extra path
     const linkPath = level === 0 ? `/${item.name}` : `/${fullPath}`;
     return (
-      <Link href={linkPath} className={`flex items-center gap-2 py-1 px-2 hover:bg-accent rounded-sm cursor-pointer`} style={{ paddingLeft: `${level * 12 + 8}px` }}>
+      <Link href={linkPath}
+        prefetch={false}
+        className={`flex items-center gap-2 py-1 px-2 hover:bg-accent rounded-sm cursor-pointer`} 
+        style={{ paddingLeft: `${level * 12 + 8}px` }}
+      >
         <File className="h-4 w-4 text-blue-500" />
         <span className="text-sm">{item.name}</span>
       </Link>
@@ -82,7 +56,7 @@ function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: {
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        {item.children?.map((child: any, index: number) => (
+        {item.children?.map((child: FileTreeItem, index: number) => (
           <FileTreeItem key={index} item={child} level={level + 1} basePath={fullPath} isCollapsed={isCollapsed} />
         ))}
       </CollapsibleContent>
@@ -90,7 +64,7 @@ function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: {
   );
 }
 
-export function AppSidebar() {
+export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sortOrder, setSortOrder] = useState<'name' | 'type'>('name');
 
@@ -103,10 +77,10 @@ export function AppSidebar() {
     return a.name.localeCompare(b.name);
   });
 
-  const sortChildren = (items: any[]): any[] => {
+  const sortChildren = (items: FileTreeItem[]): FileTreeItem[] => {
     return items.map(item => ({
       ...item,
-      children: item.children ? sortChildren(item.children.sort((a: any, b: any) => {
+      children: item.children ? sortChildren(item.children.sort((a: FileTreeItem, b: FileTreeItem) => {
         if (sortOrder === 'type') {
           if (a.type !== b.type) {
             return a.type === 'folder' ? -1 : 1;
@@ -120,19 +94,20 @@ export function AppSidebar() {
   const finalSortedTree = sortChildren(sortedFileTree);
   return (
     <Sidebar>
-      <SidebarHeader className="my-4 relative h-20">
-        <Link href="/">
+      <SidebarHeader>
+        <Link 
+          href="/"
+        >
           <Image
-            fill
+            width={80}
+            height={20}
             src="/granite.png"
             alt="Granite Logo"
-            className="object-contain"
+            className="object-contain mx-auto"
           />
         </Link>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <div className="flex items-center justify-center p-2">
+
+        <div className="flex items-center justify-center p-2">
             <TooltipProvider>
               <div className="flex gap-1">
                 <Tooltip>
@@ -170,6 +145,9 @@ export function AppSidebar() {
               </div>
             </TooltipProvider>
           </div>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
           <SidebarGroupContent>
             <div className="space-y-1">
               {finalSortedTree.map((item, index) => (

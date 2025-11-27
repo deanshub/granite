@@ -5,7 +5,7 @@ import { TiptapEditor } from './tiptap-editor';
 export function FileViewer({ filePath }: { filePath: string }) {
   let fileContent = '';
   try {
-    const fullPath = join(process.cwd(), filePath);
+    const fullPath = join( process.env.ROOT_DIR || process.cwd(), decodeURIComponent(filePath));
     fileContent = readFileSync(fullPath, 'utf-8');
   } catch (error) {
     fileContent = 'File not found or cannot be read';
