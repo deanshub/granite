@@ -24,6 +24,7 @@ import React, { useState } from "react";
 import { type FileTreeItem  } from "@/lib/file-tree";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { NewFileModal } from "./new-file-modal";
 import Link from "next/link";
 
 function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: { item: FileTreeItem, level?: number, basePath?: string, isCollapsed?: boolean }) {
@@ -44,7 +45,7 @@ function FileTreeItem({ item, level = 0, basePath = "", isCollapsed = false }: {
         style={{ paddingLeft: `${level * 12 + 8}px` }}
       >
         <File className="h-4 w-4 text-blue-500" />
-        <span className="text-sm">{item.name}</span>
+        <span className="text-sm">{item.name.replace(/\.md$/, '')}</span>
       </Link>
     );
   }
@@ -70,6 +71,7 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sortOrder, setSortOrder] = useState<'name' | 'type'>('name');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showNewFileModal, setShowNewFileModal] = useState(false);
 
   const sortedFileTree = [...fileTree].sort((a, b) => {
     if (sortOrder === 'type') {
@@ -133,7 +135,7 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
               <div className="flex gap-1">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0 cursor-pointer" onClick={() => setShowNewFileModal(true)}>
                       <FileText className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -141,15 +143,7 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                      <FolderPlus className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>New Folder</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setSortOrder(sortOrder === 'name' ? 'type' : 'name')}>
+                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0 cursor-pointer" onClick={() => setSortOrder(sortOrder === 'name' ? 'type' : 'name')}>
                       <ArrowUpDown className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -157,7 +151,7 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setIsCollapsed(!isCollapsed)}>
+                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0 cursor-pointer" onClick={() => setIsCollapsed(!isCollapsed)}>
                       {isCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
                     </Button>
                   </TooltipTrigger>
@@ -189,6 +183,10 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <NewFileModal 
+        open={showNewFileModal} 
+        onOpenChange={setShowNewFileModal} 
+      />
     </Sidebar>
   )
 }

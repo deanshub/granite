@@ -3,17 +3,21 @@ import { join } from 'path';
 import { TiptapEditor } from './tiptap-editor';
 
 export function FileViewer({ filePath }: { filePath: string }) {
-  let fileContent = '';
   try {
     const fullPath = join( process.env.ROOT_DIR || process.cwd(), decodeURIComponent(filePath));
-    fileContent = readFileSync(fullPath, 'utf-8');
+    const fileContent = readFileSync(fullPath, 'utf-8');
+    return (
+      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl p-4">
+        <TiptapEditor content={fileContent} />
+      </div>
+    );
   } catch (error) {
-    fileContent = 'File not found or cannot be read';
+    console.error(error);
+    return (
+      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl p-4">
+        <p className="text-muted-foreground">File not found or cannot be read</p>
+      </div>
+    );
   }
 
-  return (
-    <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl p-4">
-      <TiptapEditor content={fileContent} />
-    </div>
-  );
 }

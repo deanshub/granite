@@ -29,8 +29,8 @@ export function LayoutClient({
 }) {
   const pathname = usePathname();
   const pathSegments = pathname.split('/').filter(Boolean);
-  const fileName = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] : 'page.tsx';
-  const folderPath = pathSegments.length > 1 ? pathSegments.slice(0, -1).join('/') : (pathSegments.length === 1 ? 'root' : 'app');
+  const fileName = pathSegments[pathSegments.length - 1];
+  const folderPath = pathSegments.length > 1 ? pathSegments.slice(0, -1).join('/') :  'root';
 
   return (
     <ThemeProvider
