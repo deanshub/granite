@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { TiptapEditor } from './tiptap-editor';
 
 export function FileViewer({ filePath }: { filePath: string }) {
   let fileContent = '';
@@ -12,7 +13,7 @@ export function FileViewer({ filePath }: { filePath: string }) {
 
   return (
     <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl p-4">
-      <pre className="text-sm overflow-auto whitespace-pre-wrap">{fileContent}</pre>
+      <TiptapEditor content={fileContent} />
     </div>
   );
 }
