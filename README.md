@@ -1,6 +1,6 @@
 # Granite
 
-A modern file explorer and editor built with Next.js, featuring a clean interface and powerful editing capabilities.
+If you ever wanted an Obsidian web app, this is it. A modern file explorer and markdown editor built with Next.js, featuring a clean interface and powerful editing capabilities.
 
 ## Features
 
@@ -31,17 +31,20 @@ A modern file explorer and editor built with Next.js, featuring a clean interfac
 ### Installation
 
 1. Clone the repository:
+
 ```bash
-git clone https://github.com/your-username/granite.git
+git clone https://github.com/deanshub/granite.git
 cd granite
 ```
 
 2. Install dependencies:
+
 ```bash
 bun install
 ```
 
 3. Run the development server:
+
 ```bash
 bun run dev
 ```
@@ -51,15 +54,42 @@ bun run dev
 ## Docker
 
 ### Build and run locally:
+
 ```bash
 docker build -t granite .
 docker run -p 3000:3000 granite
 ```
 
 ### Pull from GitHub Container Registry:
+
 ```bash
-docker pull ghcr.io/your-username/granite:main
-docker run -p 3000:3000 ghcr.io/your-username/granite:main
+docker pull ghcr.io/deanshub/granite:main
+docker run -p 3000:3000 ghcr.io/deanshub/granite:main
+```
+
+### Docker Compose:
+
+Create a `docker-compose.yml` file:
+
+```yaml
+services:
+  granite:
+    image: ghcr.io/deanshub/granite:main
+    # Or build locally:
+    # build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data # Mount your files directory
+    environment:
+      - NODE_ENV=production
+      - ROOT_DIR=/app/data
+```
+
+Run with:
+
+```bash
+docker-compose up -d
 ```
 
 ## Usage
@@ -74,6 +104,7 @@ docker run -p 3000:3000 ghcr.io/your-username/granite:main
 ## Development
 
 The project uses:
+
 - Server Components for file system operations
 - Client Components for interactive UI elements
 - Server Actions for file creation and saving
