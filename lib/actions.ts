@@ -17,6 +17,7 @@ export async function createFile(formData: FormData) {
     writeFileSync(fullPath, '');
     console.log('File created');
   } catch (error) {
+    console.error(error);
     throw new Error('Failed to create file');
   }
   // Redirect to the new file
@@ -28,6 +29,7 @@ export async function saveFileContent(filePath: string, content: string) {
     const fullPath = join(process.env.ROOT_DIR || process.cwd(), decodeURIComponent(filePath));
     writeFileSync(fullPath, content);
   } catch (error) {
+    console.error(error);
     throw new Error('Failed to save file');
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 import Image from "next/image";
-import { FileText, FolderPlus, ArrowUpDown, ChevronUp, ChevronDown, Folder, FolderOpen, File } from "lucide-react";
+import { FileText, ArrowUpDown, ChevronUp, ChevronDown, Folder, FolderOpen, File } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,

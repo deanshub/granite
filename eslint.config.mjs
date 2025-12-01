@@ -12,6 +12,16 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ignore Tiptap template files and external hooks
+    "components/tiptap-templates/**",
+    "components/tiptap-ui/**", 
+    "components/tiptap-ui-primitive/**",
+    "hooks/use-composed-ref.ts",
+    "hooks/use-element-rect.ts",
+    "hooks/use-is-breakpoint.ts",
+    "hooks/use-menu-navigation.ts",
+    "hooks/use-unmount.ts",
+    "lib/tiptap-utils.ts"
   ]),
 ]);
 

@@ -30,7 +30,7 @@ export function getFileTree(dirPath: string): FileTreeItem[] {
           };
         }
       });
-  } catch (error) {
+  } catch {
     return [];
   }
 }

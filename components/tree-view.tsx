@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -21,7 +21,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { X, Share2 } from "lucide-react";
+import { X } from "lucide-react";
 import {
   HoverCard,
   HoverCardContent,
@@ -164,7 +164,7 @@ function TreeItem({
   iconMap = defaultIconMap,
   menuItems,
   getSelectedItems,
-}: TreeItemProps): JSX.Element {
+}: TreeItemProps): React.JSX.Element {
   const isOpen = expandedIds.has(item.id);
   const isSelected = selectedIds.has(item.id);
   const itemRef = useRef<HTMLDivElement>(null);
@@ -264,30 +264,6 @@ function TreeItem({
 
     lastSelectedId.current = item.id;
     onSelect(newSelection);
-  };
-
-  const handleAction = (action: string) => {
-    if (onAction) {
-      // Get all selected items, or just this item if none selected
-      const selectedItems =
-        selectedIds.size > 0
-          ? allItems
-              .flatMap((item) => getAllDescendants(item))
-              .filter((item) => selectedIds.has(item.id))
-          : [item];
-      onAction(action, selectedItems);
-    }
-  };
-
-  // Helper function to get all descendants of an item (including the item itself)
-  const getAllDescendants = (item: TreeViewItem): TreeViewItem[] => {
-    const descendants = [item];
-    if (item.children) {
-      item.children.forEach((child) => {
-        descendants.push(...getAllDescendants(child));
-      });
-    }
-    return descendants;
   };
 
   const handleAccessClick = (e: React.MouseEvent) => {
@@ -693,8 +669,11 @@ export default function TreeView({
 
   // Update expanded IDs when search changes
   useEffect(() => {
-    if (searchQuery.trim()) {
-      setExpandedIds(prev => new Set([...prev, ...searchExpandedIds]));
+    if (searchQuery.trim() && searchExpandedIds.size > 0) {
+      // Use startTransition to avoid cascading renders
+      React.startTransition(() => {
+        setExpandedIds(prev => new Set([...prev, ...searchExpandedIds]));
+      });
     }
   }, [searchExpandedIds, searchQuery]);
 
