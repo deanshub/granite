@@ -22,3 +22,12 @@ export async function createFile(formData: FormData) {
   // Redirect to the new file
   redirect(`/${filePath}`);
 }
+
+export async function saveFileContent(filePath: string, content: string) {
+  try {
+    const fullPath = join(process.env.ROOT_DIR || process.cwd(), decodeURIComponent(filePath));
+    writeFileSync(fullPath, content);
+  } catch (error) {
+    throw new Error('Failed to save file');
+  }
+}

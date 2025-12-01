@@ -178,13 +178,24 @@ const MobileToolbarContent = ({
   </>
 )
 
-export function SimpleEditor({ content }: { content: string }) {
+export function SimpleEditor({ content, onChange }: { content: string; onChange: (content: string) => void }) {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
     "main"
   )
   const toolbarRef = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const debouncedOnChange = (newContent: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    timeoutRef.current = setTimeout(() => {
+      onChange(newContent);
+    }, 500);
+  };
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -226,6 +237,9 @@ export function SimpleEditor({ content }: { content: string }) {
     ],
     content,
     contentType: 'markdown',
+    onUpdate: ({ editor }) => {
+      debouncedOnChange(editor?.getMarkdown() ?? "");
+    },
   })
 
   const rect = useCursorVisibility({
