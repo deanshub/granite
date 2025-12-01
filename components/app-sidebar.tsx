@@ -23,6 +23,7 @@ import {
 import React, { useState } from "react";
 import { type FileTreeItem  } from "@/lib/file-tree";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Search } from "lucide-react";
 import { NewFileModal } from "./new-file-modal";
 import Link from "next/link";
@@ -71,6 +72,7 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sortOrder, setSortOrder] = useState<'name' | 'type'>('name');
   const [searchTerm, setSearchTerm] = useState('');
+  const [markdownOnly, setMarkdownOnly] = useState(true);
   const [showNewFileModal, setShowNewFileModal] = useState(false);
 
   const sortedFileTree = [...fileTree].sort((a, b) => {
@@ -97,9 +99,30 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
   };
 
   const filterTree = (items: FileTreeItem[]): FileTreeItem[] => {
-    if (!searchTerm) return items;
+    let filteredItems = items;
     
-    return items.filter(item => {
+    // Apply markdown filter first
+    if (markdownOnly) {
+      const filterMarkdown = (items: FileTreeItem[]): FileTreeItem[] => {
+        return items.reduce((acc: FileTreeItem[], item) => {
+          if (item.type === "folder") {
+            const filteredChildren = filterMarkdown(item.children || []);
+            if (filteredChildren.length > 0) {
+              acc.push({ ...item, children: filteredChildren });
+            }
+          } else if (item.name.toLowerCase().endsWith('.md') || item.name.toLowerCase().endsWith('.markdown')) {
+            acc.push(item);
+          }
+          return acc;
+        }, []);
+      };
+      filteredItems = filterMarkdown(filteredItems);
+    }
+    
+    // Apply search filter
+    if (!searchTerm) return filteredItems;
+    
+    return filteredItems.filter(item => {
       if (item.name.toLowerCase().includes(searchTerm.toLowerCase())) {
         return true;
       }
@@ -161,7 +184,7 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
             </TooltipProvider>
           </div>
           <div className="px-2 pb-2">
-            <div className="relative">
+            <div className="relative mb-2">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search files..."
@@ -169,6 +192,16 @@ export function AppSidebar({ fileTree }: { fileTree: FileTreeItem[] }) {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-8"
               />
+            </div>
+            <div className="flex items-center space-x-2 text-sm px-2">
+              <Checkbox
+                id="markdown-only"
+                checked={markdownOnly}
+                onCheckedChange={(checked) => setMarkdownOnly(checked === true)}
+              />
+              <label htmlFor="markdown-only" className="text-muted-foreground cursor-pointer">
+                Markdown only
+              </label>
             </div>
           </div>
       </SidebarHeader>
