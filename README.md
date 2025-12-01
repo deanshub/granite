@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Granite
+
+A modern file explorer and editor built with Next.js, featuring a clean interface and powerful editing capabilities.
+
+## Features
+
+- 📁 **File Explorer** - Browse and navigate your project files with a tree view
+- ✏️ **Rich Text Editor** - Edit files with a Notion-like editor powered by Tiptap
+- 🔍 **Search & Filter** - Quickly find files with the built-in search functionality
+- 🌓 **Dark/Light Mode** - Toggle between themes with system preference support
+- 🔄 **Auto-save** - Debounced auto-save functionality for seamless editing
+- 📱 **Responsive Design** - Works on desktop and mobile devices
+- 🎨 **Modern UI** - Built with shadcn/ui components and Tailwind CSS
+
+## Tech Stack
+
+- **Framework**: Next.js 16 with App Router
+- **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui
+- **Editor**: Tiptap with markdown support
+- **Icons**: Lucide React
+- **Package Manager**: Bun
+- **Deployment**: Docker with GitHub Actions
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- [Bun](https://bun.sh/) installed on your machine
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/granite.git
+cd granite
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+bun install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+bun run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Docker
 
-To learn more about Next.js, take a look at the following resources:
+### Build and run locally:
+```bash
+docker build -t granite .
+docker run -p 3000:3000 granite
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Pull from GitHub Container Registry:
+```bash
+docker pull ghcr.io/your-username/granite:main
+docker run -p 3000:3000 ghcr.io/your-username/granite:main
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+- **Browse Files**: Use the sidebar to navigate through your project structure
+- **Create Files**: Click the "New File" button and enter a file path
+- **Edit Files**: Click on any file to open it in the editor
+- **Search**: Use the search bar in the sidebar to filter files
+- **Auto-save**: Changes are automatically saved after 500ms of inactivity
+- **Theme Toggle**: Use the theme switcher in the top bar
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The project uses:
+- Server Components for file system operations
+- Client Components for interactive UI elements
+- Server Actions for file creation and saving
+- Debounced auto-save for performance
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details.
