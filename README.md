@@ -7,10 +7,13 @@ If you ever wanted an Obsidian web app, this is it. A modern file explorer and m
 - 📁 **File Explorer** - Browse and navigate your project files with a tree view
 - ✏️ **Rich Text Editor** - Edit files with a Notion-like editor powered by Tiptap
 - 🔍 **Search & Filter** - Quickly find files with the built-in search functionality
+- 📝 **Markdown Filter** - Toggle to show only markdown files (.md, .markdown)
 - 🌓 **Dark/Light Mode** - Toggle between themes with system preference support
 - 🔄 **Auto-save** - Debounced auto-save functionality for seamless editing
 - 📱 **Responsive Design** - Works on desktop and mobile devices
 - 🎨 **Modern UI** - Built with shadcn/ui components and Tailwind CSS
+- 📦 **PWA Support** - Install as a native app with offline capabilities
+- 🔗 **Auto Git Clone** - Automatically clone repositories on first run
 
 ## Tech Stack
 
@@ -50,6 +53,24 @@ bun run dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Environment Variables
+
+Granite supports several environment variables for customization:
+
+```bash
+# Optional: Root directory for file operations (defaults to current directory)
+ROOT_DIR=/path/to/your/files
+
+# Optional: Git repository URL to clone if ROOT_DIR is empty or doesn't exist
+REPO_URL=https://github.com/username/repository.git
+
+# PWA Configuration (optional)
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_public_key_here
+VAPID_PRIVATE_KEY=your_private_key_here
+```
+
+Copy `.env.example` to `.env` and configure as needed.
 
 ## Docker
 
@@ -98,8 +119,10 @@ docker-compose up -d
 - **Create Files**: Click the "New File" button and enter a file path
 - **Edit Files**: Click on any file to open it in the editor
 - **Search**: Use the search bar in the sidebar to filter files
+- **Markdown Filter**: Use the checkbox to show only markdown files
 - **Auto-save**: Changes are automatically saved after 500ms of inactivity
 - **Theme Toggle**: Use the theme switcher in the top bar
+- **Auto Git Clone**: If `REPO_URL` is set and the directory is empty, the repository will be automatically cloned on startup
 
 ## Development
 

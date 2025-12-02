@@ -29,12 +29,12 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0a",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const fileTree = getFileTree( process.env.ROOT_DIR || process.cwd());
+  const fileTree = await getFileTree( process.env.ROOT_DIR || process.cwd());
   const branches = [
     { value: "main", label: "main" },
     { value: "develop", label: "develop" },
