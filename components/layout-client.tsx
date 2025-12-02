@@ -1,11 +1,11 @@
 'use client';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-// import { BranchSelector } from "@/components/branch-selector";
+import { BranchSelector } from "@/components/branch-selector";
 import ModeToggle from "@/components/mode-toggle";
 import { ThemeProvider } from "@/components/theme-provider";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-// import { Save } from "lucide-react";
+import { GitCommit } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,11 +22,11 @@ import { useServiceWorker } from "@/hooks/use-service-worker";
 export function LayoutClient({ 
   children, 
   fileTree,
-  // branches
+  branches
 }: { 
   children: React.ReactNode;
   fileTree: FileTreeItem[];
-  branches: { value: string, label: string }[];
+  branches?: { value: string, label: string }[];
 }) {
   const pathname = usePathname();
   const pathSegments = pathname.split('/').filter(Boolean);
@@ -65,14 +65,22 @@ export function LayoutClient({
               </BreadcrumbList>
             </Breadcrumb>
             <div className="flex-1 flex justify-center">
-              {/* <Button variant="outline" size="sm">
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </Button> */}
+              {
+                branches ? (
+                  <Button variant="outline" size="sm" className="cursor-pointer">
+                    <GitCommit className="h-4 w-4" />
+                    Commit Changes
+                  </Button>
+                ): null
+              }
             </div>
             <div className="flex items-center gap-2">
               <ModeToggle />
-              {/* <BranchSelector branches={branches} /> */}
+              {
+                branches ? (
+                  <BranchSelector branches={branches} />
+                ) : null
+              }
             </div>
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4">

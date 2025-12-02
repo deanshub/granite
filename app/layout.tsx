@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { getFileTree } from "@/lib/file-tree";
+import { getBranches, getFileTree } from "@/lib/file-tree";
 import { LayoutClient } from "@/components/layout-client";
 
 const geistSans = Geist({
@@ -35,13 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const fileTree = await getFileTree( process.env.ROOT_DIR || process.cwd());
-  const branches = [
-    { value: "main", label: "main" },
-    { value: "develop", label: "develop" },
-    { value: "feature/auth", label: "feature/auth" },
-    { value: "feature/ui-updates", label: "feature/ui-updates" },
-    { value: "hotfix/critical-bug", label: "hotfix/critical-bug" },
-  ];
+  const branches = await getBranches(process.env.ROOT_DIR || process.cwd());
 
   return (
     <html lang="en">

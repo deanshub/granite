@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 
 export function BranchSelector({ branches }: { branches: { value: string, label: string }[] }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("main");
+  const [value, setValue] = useState(branches.find(b=>b.label.startsWith('*'))?.value ?? branches[0]?.value ?? '');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,7 +33,7 @@ export function BranchSelector({ branches }: { branches: { value: string, label:
           <div className="flex items-center gap-2">
             <GitBranch className="h-4 w-4" />
             {value
-              ? branches.find((branch) => branch.value === value)?.label
+              ? branches.find((branch) => branch.value === value)?.label.replace(/^\*\s+/, '')
               : "Select branch..."}
           </div>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -60,7 +60,7 @@ export function BranchSelector({ branches }: { branches: { value: string, label:
                       value === branch.value ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {branch.label}
+                  {branch.label.replace(/^\*\s+/, '')}
                 </CommandItem>
               ))}
             </CommandGroup>
