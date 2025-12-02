@@ -17,6 +17,7 @@ import {
 import { usePathname } from "next/navigation";
 import { type FileTreeItem } from "@/lib/file-tree";
 import { AppSidebar } from "@/components/app-sidebar";
+import { useServiceWorker } from "@/hooks/use-service-worker";
 
 export function LayoutClient({ 
   children, 
@@ -31,6 +32,8 @@ export function LayoutClient({
   const pathSegments = pathname.split('/').filter(Boolean);
   const fileName = pathSegments[pathSegments.length - 1];
   const folderPath = pathSegments.length > 1 ? pathSegments.slice(0, -1).join('/') :  'root';
+
+  useServiceWorker();
 
   return (
     <ThemeProvider
