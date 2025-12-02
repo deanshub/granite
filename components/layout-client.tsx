@@ -18,6 +18,10 @@ import { usePathname } from "next/navigation";
 import { type FileTreeItem } from "@/lib/file-tree";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useServiceWorker } from "@/hooks/use-service-worker";
+import { commitChanges } from "@/lib/git-actions";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+import { useState } from "react";
 
 export function LayoutClient({ 
   children, 
@@ -32,8 +36,25 @@ export function LayoutClient({
   const pathSegments = pathname.split('/').filter(Boolean);
   const fileName = pathSegments[pathSegments.length - 1];
   const folderPath = pathSegments.length > 1 ? pathSegments.slice(0, -1).join('/') :  'root';
+  const [isCommitting, setIsCommitting] = useState(false);
 
   useServiceWorker();
+
+  const handleCommit = async () => {
+    setIsCommitting(true);
+    try {
+      const result = await commitChanges('Update files via Granite');
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch {
+      toast.error('Failed to commit changes');
+    } finally {
+      setIsCommitting(false);
+    }
+  };
 
   return (
     <ThemeProvider
@@ -67,9 +88,15 @@ export function LayoutClient({
             <div className="flex-1 flex justify-center">
               {
                 branches ? (
-                  <Button variant="outline" size="sm" className="cursor-pointer">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="cursor-pointer"
+                    onClick={handleCommit}
+                    disabled={isCommitting}
+                  >
                     <GitCommit className="h-4 w-4" />
-                    Commit Changes
+                    {isCommitting ? 'Committing...' : 'Commit Changes'}
                   </Button>
                 ): null
               }
@@ -87,6 +114,7 @@ export function LayoutClient({
             {children}
           </main>
         </SidebarInset>
+        <Toaster closeButton richColors />
       </SidebarProvider>
     </ThemeProvider>
   );

@@ -72,7 +72,6 @@ export async function getFileTree(dirPath: string): Promise<FileTreeItem[]> {
 export async function getBranches(dirPath: string): Promise<undefined | { value: string, label: string }[]> {
   try {
     const branches = (await $`git branch --list --no-color`.cwd(dirPath).text()).trim().split('\n');
-    console.log({branches});
     
     return branches.map(branch => ({ value: branch.replace(/^\*\s+/, ''), label: branch.replace(/\s+/g, ' ').replace(/\-/g, ' ') }));
   } catch {
